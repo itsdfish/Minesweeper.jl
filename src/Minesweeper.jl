@@ -1,5 +1,9 @@
 module Minesweeper
-
-# Write your package code here.
-
+    using StatsBase
+    import Base: show
+    export Game, Cell, add_mines!, get_neighbors, reveal_zeros!, game_over
+    export get_neighbor_indices, show, reveal, play, compute_score!
+    export update!, select_cell!, initilize_cells, mine_count!, import_gui
+    export generate_gui, reveal_button!
+    include("Game.jl")
 end
