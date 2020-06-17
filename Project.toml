@@ -1,7 +1,7 @@
 name = "Minesweeper"
 uuid = "758a1c58-1ae5-4273-bf23-de2a3f195520"
 authors = ["itsdfish <itsdfish@gmail.com> and contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Gtk = "4c0ca9eb-093a-5379-98c5-f87ac0bbbf44"
