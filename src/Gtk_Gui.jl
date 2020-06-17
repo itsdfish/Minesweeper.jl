@@ -40,12 +40,12 @@ function generate_gui!(game, win)
     toggle_label = GtkLabel("Flagging")
     push!(toggle_panel, toggle_label)
     push!(toggle_panel, toggle)
-    for r in 1:game.dims[1], c in 1:game.dims[2]
+    for r in 1:game.dims[2], c in 1:game.dims[1]
         b = GtkButton("")
         g[r,c] = b
         signal_connect(x->on_button_clicked(x, game, win, game.cells[c,r], toggle), b, "clicked")
     end
-    set_gtk_property!(g, :column_spacing, 5)  # introduce a 15-pixel gap between columns
+    set_gtk_property!(g, :column_spacing, 5)
     set_gtk_property!(g, :row_spacing, 5)
     set_gtk_property!(g, :column_homogeneous, true)
     set_gtk_property!(g, :row_homogeneous, true)
