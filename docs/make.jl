@@ -13,6 +13,7 @@ makedocs(
     ]
 )
 
+
 deploydocs(
     repo = "https://github.com/itsdfish/Minesweeper.jl.git",
     versions = ["stable" => "v^", "v#.#", "dev" => "master"]
