@@ -1,6 +1,6 @@
 # Minesweeper
 
-- [**DEVEL**][docs-dev-url] &mdash; *documentation of the in-development version.*
+[![][docs-dev-img]][docs-dev-url]
 
 Minesweeper.jl implements the classic game Minesweeper in the Julia programming language. The modular design used in Minesweeper.jl allows Minesweeper to be played interactively or to be used in model simulations with or without a GUI.
 
