@@ -20,9 +20,9 @@ end
     v = [-1,0,1]
     for Δx in v, Δy in v
         if (Δx == 0) & (Δy == 0)
-            @test CartesianIndex(2 + Δx,2 + Δy) ∉ neighbors
+            @test CartesianIndex(2 + Δx, 2 + Δy) ∉ neighbors
         else
-            @test CartesianIndex(2 + Δx,2 + Δy) ∈ neighbors
+            @test CartesianIndex(2 + Δx, 2 + Δy) ∈ neighbors
         end
     end
 end
@@ -32,15 +32,14 @@ end
 
     Random.seed!(6564)
     game = Game(dims=(5,5), n_mines=3)
-    reveal_zeros!(game, 4, 1)
+    reveal_zeros!(game, 3, 2)
     @test count(x->x.revealed, game.cells) == 0
 
     Random.seed!(6564)
     game = Game(dims=(5,5), n_mines=3)
     reveal_zeros!(game, 1, 4)
-    @test count(x->x.revealed, game.cells) == 15
-    revealed_indices = ((1, 3),(1, 2),(2, 2),(2, 3),(3, 2),(3, 3),
-        (1, 4), (2, 4),(3, 4),(4, 3),(4, 4),(2, 5),(1, 5),(3, 5),(4, 5))
+    @test count(x->x.revealed, game.cells) == 6
+    revealed_indices = ((1,3),(1,4),(1,5),(2,3),(2,4),(2,5))
     for i in revealed_indices
         @test game.cells[i...].revealed
     end
