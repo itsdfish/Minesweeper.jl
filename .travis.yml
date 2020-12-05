@@ -1,31 +1,57 @@
-# language: julia
+language: julia
 
-# dist: xenial
+dist: xenial
 
-# os:
-#   - linux
+os:
+  - linux
 
-# julia:
-#  - 1.5
-#  - nightly
+julia:
+ - 1.5
+ - nightly
 
-# matrix:
-#    allow_failures:
-#      - julia: nightly
-#    fast_finish: true
+matrix:
+   allow_failures:
+     - julia: nightly
+   fast_finish: true
 
-# notifications:
-#   email: false
+notifications:
+  email: false
 
-# git:
-#   depth: 99999999
+git:
+  depth: 99999999
 
-# jobs:
-#   include:
-#     - stage: Documentation
-#       julia: 1.5
-#       os: linux
-#       script:
-#         - julia --project=docs -e 'using Pkg; Pkg.instantiate(); Pkg.develop(PackageSpec(path=pwd()))'
-#         - julia --project=docs --color=yes docs/make.jl
-#       after_success: skip
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.5
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
+                                               Pkg.instantiate()'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
+
+      name: Documentation
+
+on:
+  push:
+    branches:
+      - master
+    tags: '*'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: '1.5'
+      - name: Install dependencies
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+      - name: Build and deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions token
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }} # For authentication with SSH deploy key
+        run: julia --project=docs/ docs/make.jl
