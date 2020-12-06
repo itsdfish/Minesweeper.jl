@@ -102,6 +102,8 @@ function set_toggle(button)
 end
 
 function update!(game, gui::GtkWindowLeaf)
+    counter = gui[1][2][2]
+    set_gtk_property!(counter, :label, string(game.mines_flagged))
     for c in game.cells
         if c.flagged
             flag_button!(gui, c)
