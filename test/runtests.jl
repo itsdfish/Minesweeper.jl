@@ -47,35 +47,35 @@ end
     @test !any(x->x.has_mine, revealed)
 end
 
-@safetestset "gui tests" begin
-    using Test, Random, Minesweeper
-    Random.seed!(59808)
-    import_gui()
-    game = Game(dims=(10,10), n_mines=10)
-    gui = generate_gui(game)
-    cell = game.cells[1]
-    flag_cell!(cell, game, gui)
-    @test cell.flagged
-    @test game.mines_flagged == 1
+# @safetestset "gui tests" begin
+#     using Test, Random, Minesweeper
+#     Random.seed!(59808)
+#     import_gui()
+#     game = Game(dims=(10,10), n_mines=10)
+#     gui = generate_gui(game)
+#     cell = game.cells[1]
+#     flag_cell!(cell, game, gui)
+#     @test cell.flagged
+#     @test game.mines_flagged == 1
 
-    idx = findfirst(x->x.mine_count ==1, game.cells)
-    select_cell!(game, idx)
-    @test game.cells[idx].revealed
+#     idx = findfirst(x->x.mine_count ==1, game.cells)
+#     select_cell!(game, idx)
+#     @test game.cells[idx].revealed
 
-    idx = findfirst(x->x.has_mine, game.cells)
-    select_cell!(game, idx)
-    @test game.cells[idx].revealed
-    @test game.mine_detonated
-    @test game_over(game)
+#     idx = findfirst(x->x.has_mine, game.cells)
+#     select_cell!(game, idx)
+#     @test game.cells[idx].revealed
+#     @test game.mine_detonated
+#     @test game_over(game)
     
-    game = Game(dims=(10,10), n_mines=10)
+#     game = Game(dims=(10,10), n_mines=10)
 
-    for cell in game.cells
-        if cell.has_mine
-            cell.flagged = true
-        else
-            cell.revealed = true
-        end
-    end 
-    @test game_over(game)
-end
+#     for cell in game.cells
+#         if cell.has_mine
+#             cell.flagged = true
+#         else
+#             cell.revealed = true
+#         end
+#     end 
+#     @test game_over(game)
+# end
