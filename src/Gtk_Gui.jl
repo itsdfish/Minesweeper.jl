@@ -96,14 +96,18 @@ function on_button_clicked(button, game, gui, cell, toggle)
 end
 
 function set_toggle(button)
-    println("setting toggle state")
     state = get_gtk_property(button, :state, String)
     set_gtk_property(button, :state, !state)
 end
 
-function update!(game, gui::GtkWindowLeaf)
+function update_flag_count!(game, gui)
     counter = gui[1][2][2]
     set_gtk_property!(counter, :label, string(game.mines_flagged))
+    return nothing
+end
+
+function update!(game, gui::GtkWindowLeaf)
+    update_flag_count!(game, gui)
     for c in game.cells
         if c.flagged
             flag_button!(gui, c)
@@ -117,7 +121,6 @@ function update!(game, gui::GtkWindowLeaf)
             end
         end
     end
-    sleep(game.pause)
     return nothing
 end
 

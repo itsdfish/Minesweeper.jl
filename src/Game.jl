@@ -29,7 +29,6 @@ Minesweeper game object
 * mine_detonated: indicates whether a mine has been detonated
 * score: score for game, which includes hits, misses, false alarms and correct rejections
 * trials: the number of trials or moves
-* pause: time paused for simulations
 """
 mutable struct Game{T}
     cells::Array{Cell,2}
@@ -39,17 +38,16 @@ mutable struct Game{T}
     mine_detonated::Bool
     score::T
     trials::Int
-    pause::Float64
 end
 
 function Game(;dims=(12,12), n_mines=40, mines_flagged=0,
-    mine_detonated=false, trials=0, pause=1.0)
+    mine_detonated=false, trials=0)
     score = (hits=0.0,false_alarms=0.0,misses=0.0,correct_rejections=0.0)
     cells = initilize_cells(dims)
     add_mines!(cells, n_mines)
     mine_count!(cells)
     return Game(cells, dims, n_mines, mines_flagged, mine_detonated,
-        score, trials, pause)
+        score, trials)
 end
 
 function initilize_cells(dims)
@@ -73,6 +71,7 @@ function mine_count!(cells)
 end
 
 get_neighbors(game::Game, idx) = get_neighbors(game.cells, idx.I...)
+get_neighbors(game::Game, cell::Cell) = get_neighbors(game.cells, cell.idx.I...)
 get_neighbors(game::Game, x, y) = get_neighbors(game.cells, x, y)
 get_neighbors(cells, idx) = get_neighbors(cells, idx.I...)
 
@@ -180,8 +179,12 @@ function Base.show(io::IO, cells::Array{Cell,2})
 end
 
 select_cell!(game, x, y) = select_cell!(game, CartesianIndex(x,y))
+select_cell!(game, cell::Cell) = select_cell!(game, cell.idx)
 
 function game_over(game)
+    if game.mine_detonated
+        return true
+    end
     return all(x->x.revealed || x.flagged, game.cells)
 end
 
@@ -201,7 +204,8 @@ function select_cell!(game, idx)
     cell = game.cells[idx]
     cell.revealed = true
     reveal_zeros!(game, idx)
-    return cell.has_mine
+    game.mine_detonated = cell.has_mine
+    return nothing
 end
 
 function setup()
@@ -246,8 +250,8 @@ function play(game)
         catch
             error("Please give x and y coordinates e.g. 3 2")
         end
-        has_mine = select_cell!(game, coords...)
-        if has_mine
+        select_cell!(game, coords...)
+        if game.mine_detonated
             reveal(game)
             println("Game Over")
             println(" ")
@@ -270,7 +274,6 @@ update! can be used with REPL or Gtk GUI if imported via import_gui()
 """
 function update!(game, gui::Nothing)
     println(game)
-    sleep(game.pause)
 end
 
 """
