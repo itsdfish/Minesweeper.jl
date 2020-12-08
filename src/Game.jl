@@ -178,9 +178,6 @@ function Base.show(io::IO, cells::Array{Cell,2})
     println(s)
 end
 
-select_cell!(game, x, y) = select_cell!(game, CartesianIndex(x,y))
-select_cell!(game, cell::Cell) = select_cell!(game, cell.idx)
-
 function game_over(game)
     if game.mine_detonated
         return true
@@ -200,11 +197,20 @@ function compute_score!(game)
     return nothing
 end
 
+select_cell!(game, x, y) = select_cell!(game, CartesianIndex(x,y))
+select_cell!(game, cell::Cell) = select_cell!(game, cell.idx)
+
 function select_cell!(game, idx)
     cell = game.cells[idx]
     cell.revealed = true
     reveal_zeros!(game, idx)
     game.mine_detonated = cell.has_mine
+    return nothing
+end
+
+function flag_cell!(cell, game, gui::Nothing)
+    cell.flagged = true
+    game.mines_flagged += 1
     return nothing
 end
 

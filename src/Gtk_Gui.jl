@@ -67,7 +67,7 @@ function on_button_clicked(button, game, gui, cell, toggle)
             set_gtk_property!(button, :label, "🚩")
             game.mines_flagged += 1
         end
-        set_gtk_property!(counter, :label, string(game.mines_flagged))
+        update_flag_count!(game, gui)
         cell.flagged = !cell.flagged
         return nothing
     end
@@ -106,12 +106,10 @@ function update_flag_count!(game, gui)
     return nothing
 end
 
-function update!(game, gui::GtkWindowLeaf)
+function update_reveal!(game, gui::GtkWindowLeaf)
     update_flag_count!(game, gui)
     for c in game.cells
-        if c.flagged
-            flag_button!(gui, c)
-        elseif c.revealed
+        if c.revealed
             if c.has_mine
                 reveal_button!(gui, c, "💣")
             elseif c.mine_count == 0
@@ -132,6 +130,14 @@ function reveal_button!(buttons::GtkGridLeaf, idx, value)
     delete!(buttons, buttons[idx...])
     buttons[idx...] = GtkLabel(value)
     set_gtk_property!(buttons[idx...], :visible, true)
+end
+
+function flag_cell!(cell, game, gui)
+    cell.flagged = true
+    flag_button!(gui, cell)
+    game.mines_flagged += 1
+    update_flag_count!(game, gui)
+    return nothing
 end
 
 flag_button!(win::GtkWindowLeaf, cell) = flag_button!(win[1][4], reverse(cell.idx.I))
