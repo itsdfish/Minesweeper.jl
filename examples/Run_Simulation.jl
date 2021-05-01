@@ -18,17 +18,17 @@ function flag!(game, choice)
 end
 
 # simulate game
-function run!(game; realtime=false, gui=nothing)
+function run!(game; realtime=false, gui=nothing, show_gui=false, pause=.2)
     detonated = false
-    realtime ? update!(game, gui) : nothing
-    while !detonated && !game_over(game)
+    while !game.mine_detonated && !game_over(game)
         choice = select_random_cell(game)
         if rand() <= model.θflag
             flag!(game, choice)
         else
-            detonated = select_cell!(game, choice)
+            select_cell!(game, choice)
         end
-        realtime ? update!(game, gui) : nothing
+        show_gui ? update_reveal!(game, gui) : nothing
+        realtime ? sleep(pause) : nothing
         game.trials += 1
     end
     compute_score!(game)
@@ -37,19 +37,13 @@ end
 
 #Run with GUI
 model = Model(.5)
-game = Game(dims=(10,10), n_mines=15, pause=.5)
+game = Game(dims=(10,10), n_mines=15)
 gui = generate_gui(game)
-run!(game, gui=gui, realtime=true)
-println(game.score)
-
-#Run with REPL print out
-model = Model(.5)
-game = Game(dims=(10,10), n_mines=15, pause=.5)
-run!(game, realtime=true)
+run!(game; gui, realtime=true, show_gui=true)
 println(game.score)
 
 #Run without GUI
 model = Model(.5)
-game = Game(dims=(10,10), n_mines=15, pause=.5)
+game = Game(dims=(10,10), n_mines=15)
 run!(game)
 println(game.score)
