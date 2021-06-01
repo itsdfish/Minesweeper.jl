@@ -1,7 +1,7 @@
 name = "Minesweeper"
 uuid = "758a1c58-1ae5-4273-bf23-de2a3f195520"
 authors = ["itsdfish <itsdfish@gmail.com> and contributors"]
-version = "0.2.1"
+version = "0.2.0"
 
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
