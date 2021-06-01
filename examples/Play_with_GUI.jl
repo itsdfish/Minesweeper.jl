@@ -14,4 +14,3 @@ generate_gui()
 # configure game in File-> Setup or pass custom game
 game = Game(dims=(10,20), n_mines=35)
 generate_gui(game)
-   

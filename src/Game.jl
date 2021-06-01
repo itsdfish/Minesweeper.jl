@@ -1,10 +1,12 @@
 """
+    Cell(;has_mine=false, flagged=false, revealed=false, mine_count=0, idx=(0,0))
+
 Cell represents the state of a cell in Minesweeper
-* `has_mine`: true if cell contains a mine
-* `flagged`: true if cell has been flagged as having a mine
-* `revealed`: true if the cell has been revealed
-* `mine_count`: number of mines in adjecent cells
-* `idx`: Cartesian indices of cell
+- `has_mine`: true if cell contains a mine
+- `flagged`: true if cell has been flagged as having a mine
+- `revealed`: true if the cell has been revealed
+- `mine_count`: number of mines in adjecent cells
+- `idx`: Cartesian indices of cell
 """
 mutable struct Cell
     has_mine::Bool
@@ -20,15 +22,17 @@ function Cell(;has_mine=false, flagged=false, revealed=false, mine_count=0, idx=
 end
 
 """
+    Game(;dims=(12,12), n_mines=40, mines_flagged=0, mine_detonated=false, trials=0)
+
 Minesweeper game object
 
-* cells: an array of cells
-* dims: a Tuple indicating dimensions of cell array
-* n_mines: number of mines in the game
-* mines_flagged: number of mines flagged
-* mine_detonated: indicates whether a mine has been detonated
-* score: score for game, which includes hits, misses, false alarms and correct rejections
-* trials: the number of trials or moves
+- `cells`: an array of cells
+- `dims`: a Tuple indicating dimensions of cell array
+- `n_mines`: number of mines in the game
+- `mines_flagged`: number of mines flagged
+- `mine_detonated`: indicates whether a mine has been detonated
+- `score`: score for game, which includes hits, misses, false alarms and correct rejections
+- `trials`: the number of trials or moves
 """
 mutable struct Game{T}
     cells::Array{Cell,2}
@@ -62,6 +66,11 @@ function add_mines!(cells, n_mines)
     return nothing
 end
 
+"""
+    mine_count!(cells)
+
+For each cell, omputes the number of neighboring cells containing a mine.
+"""
 function mine_count!(cells)
     for cell in cells
         neighbors = get_neighbors(cells, cell.idx)
@@ -130,6 +139,8 @@ end
 reveal(game::Game) = reveal(game.cells::Array{Cell,2})
 
 """
+    reveal(cells::Array{Cell,2})
+
 Reveals game state in REPL
 """
 function reveal(cells::Array{Cell,2})
@@ -178,6 +189,11 @@ function Base.show(io::IO, cells::Array{Cell,2})
     println(s)
 end
 
+"""
+    game_over(game)
+
+Terminates game if mine is detonated or all cells have been revealed or flagged.
+"""
 function game_over(game)
     if game.mine_detonated
         return true
@@ -185,6 +201,11 @@ function game_over(game)
     return all(x->x.revealed || x.flagged, game.cells)
 end
 
+"""
+    compute_score!(game)
+
+Computes hits, false alarms, misses and correct rejections
+"""
 function compute_score!(game)
     cells = game.cells
     n_mines = game.n_mines
@@ -197,9 +218,25 @@ function compute_score!(game)
     return nothing
 end
 
-select_cell!(game, x, y) = select_cell!(game, CartesianIndex(x,y))
+"""
+    select_cell!(game, x, y)
+    
+Select cell given a game and row and column indices.
+"""
+select_cell!(game, x, y) = select_cell!(game, CartesianIndex(x, y))
+
+"""
+    select_cell!(game, x, y)
+    
+Select cell given a game and cell object.
+"""
 select_cell!(game, cell::Cell) = select_cell!(game, cell.idx)
 
+"""
+    select_cell!(game, idx)
+
+Select cell given a game and Cartesian index.
+"""
 function select_cell!(game, idx)
     cell = game.cells[idx]
     cell.revealed = true
@@ -237,6 +274,8 @@ function play()
 end
 
 """
+    play(game)
+
 Play Minesweeper in REPL
 
 Run play() to use with default easy, medium and difficult settings
@@ -275,8 +314,10 @@ function input(prompt)
 end
 
 """
-update! is used to display game state during simulations.
-update! can be used with REPL or Gtk GUI if imported via import_gui()
+    update!(game, gui::Nothing)
+
+`update!` is used to display game state during simulations.
+`update!` can be used with REPL or Gtk GUI if imported via import_gui()
 """
 function update!(game, gui::Nothing)
     println(game)

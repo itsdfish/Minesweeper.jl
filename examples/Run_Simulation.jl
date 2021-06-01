@@ -35,10 +35,12 @@ function run!(game; realtime=false, gui=nothing, show_gui=false, pause=.2)
     return nothing
 end
 
-#Run with GUI
+# run with GUI
 model = Model(.5)
 game = Game(dims=(10,10), n_mines=15)
 gui = generate_gui(game)
+
+start_new_game!(gui, game)
 run!(game; gui, realtime=true, show_gui=true)
 println(game.score)
 
