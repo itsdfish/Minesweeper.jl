@@ -1,6 +1,8 @@
 using Gtk
 
 """
+    generate_gui()  
+
 Creates game in GUI.
 Default game is: Game(dims=(10,10), n_mines=15)
 Pass game object for custom game

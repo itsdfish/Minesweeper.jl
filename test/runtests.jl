@@ -5,7 +5,7 @@ using SafeTestsets
     Random.seed!(6564)
     n_mines = 3
     game = Game(dims=(5,5), n_mines=n_mines)
-    @test n_mines == count(x->x.has_mine, game.cells)
+    @test n_mines == count(x -> x.has_mine, game.cells)
 end
 
 @safetestset "Neighbors" begin
@@ -30,21 +30,51 @@ end
 @safetestset "reveal zeros" begin
     using Test, Random, Minesweeper
 
-    Random.seed!(6564)
-    game = Game(dims=(5,5), n_mines=3)
+    game = Game(dims=(5,5), n_mines=0)
     reveal_zeros!(game, 3, 2)
-    @test count(x->x.revealed, game.cells) == 0
+    @test count(x -> x.revealed, game.cells) == 25
 
-    Random.seed!(6564)
-    game = Game(dims=(5,5), n_mines=3)
-    reveal_zeros!(game, 1, 4)
-    @test count(x->x.revealed, game.cells) == 6
-    revealed_indices = ((1,3),(1,4),(1,5),(2,3),(2,4),(2,5))
+    game = Game(dims=(5,5), n_mines=0)
+    game.cells[1,2].has_mine = true 
+    game.cells[2,1].has_mine = true 
+    game.cells[2,2].has_mine = true
+    mine_count!(game.cells) 
+    select_cell!(game, 1, 1)
+    @test count(x -> x.revealed, game.cells) == 1
+
+    game = Game(dims=(5,5), n_mines=0)
+    game.cells[1,2].has_mine = true 
+    game.cells[2,1].has_mine = true 
+    game.cells[2,2].has_mine = true
+    mine_count!(game.cells) 
+    select_cell!(game, 1, 2)
+    @test count(x -> x.revealed, game.cells) == 1
+
+    game = Game(dims=(5,5), n_mines=0)
+    game.cells[1,2].has_mine = true 
+    game.cells[2,1].has_mine = true 
+    game.cells[2,2].has_mine = true
+    mine_count!(game.cells) 
+    select_cell!(game, 1, 4)
+    @test count(x -> x.revealed, game.cells) == 21
+
+    game = Game(dims=(5,5), n_mines=0)
+    game.cells[1,3].has_mine = true 
+    game.cells[3,5].has_mine = true 
+    game.cells[4,4].has_mine = true
+    game.cells[3,3].has_mine = true
+    game.cells[2,3].has_mine = true
+    mine_count!(game.cells)
+    map(x -> x.has_mine, game.cells)
+    select_cell!(game, 1, 5)
+
+    @test count(x -> x.revealed, game.cells) == 4
+    revealed_indices = ((1,4),(1,5),(2,4),(2,5))
     for i in revealed_indices
         @test game.cells[i...].revealed
     end
-    revealed = filter(x->x.revealed, game.cells)
-    @test !any(x->x.has_mine, revealed)
+    revealed = filter(x -> x.revealed, game.cells)
+    @test !any(x -> x.has_mine, revealed)
 end
 
 # @safetestset "gui tests" begin
@@ -58,11 +88,11 @@ end
 #     @test cell.flagged
 #     @test game.mines_flagged == 1
 
-#     idx = findfirst(x->x.mine_count ==1, game.cells)
+#     idx = findfirst(x -> x.mine_count ==1, game.cells)
 #     select_cell!(game, idx)
 #     @test game.cells[idx].revealed
 
-#     idx = findfirst(x->x.has_mine, game.cells)
+#     idx = findfirst(x -> x.has_mine, game.cells)
 #     select_cell!(game, idx)
 #     @test game.cells[idx].revealed
 #     @test game.mine_detonated
